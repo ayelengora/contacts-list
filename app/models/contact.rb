@@ -1,6 +1,6 @@
 class Contact < ApplicationRecord
   has_many :edit_histories, dependent: :destroy
-
+  has_paper_trail
   before_update :register_changes
 
   

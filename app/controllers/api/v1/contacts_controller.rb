@@ -1,7 +1,6 @@
-module Api
-  module V1
-    class ContactsController < ApplicationController
+class Api::V1::ContactsController < ApplicationController
       protect_from_forgery with: :null_session
+      skip_before_action :verify_authenticity_token
 
       def index
         contacts = Contact.all
@@ -16,7 +15,7 @@ module Api
       end
 
       def create
-        contact = Contact.new(contact_params)
+        contact = Contact.create!(contact_params)
         if contact.save
           render json: ContactSerializer.new(contact).serialized_json
         else
@@ -28,17 +27,25 @@ module Api
         contact = Contact.find_by(id: params[:id])
         if contact.update(contact_params)
           render json: ContactSerializer.new(contact).serialized_json
-          
         else
           render json: { error: contact.errors.messages }, status:422
         end
+      end
+
+      def contact_history
+        contact_found = Contact.find_by(id: params[:id])
+        contact = contact_found.versions
+        render json: {body: contact}
+
+        # contact = Contact.find(contact_item_id)
+        # render json: ContactSerializer.new(contact).serialized_json
       end
 
       def destroy
         contact = Contact.find_by(id: params[:id])
         
         if contact.destroy
-          head  :no_content
+          render json: ContactSerializer.new(contact).serialized_json
         else
           render json: { error: contact.errors.messages }, status:422
         end
@@ -47,9 +54,7 @@ module Api
       private
 
       def contact_params
-        params.require(:contact).permit(:first_name, :last_name, :phone_number, :email, edit_history_attributes: %i{first_name, last_name, phone_number, email, edit_date})
+        params.require(:contact).permit(:first_name, :last_name, :phone_number, :email)
       end
     end
-  end
-end
 
