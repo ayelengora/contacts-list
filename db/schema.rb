@@ -24,18 +24,6 @@ ActiveRecord::Schema.define(version: 2021_07_04_121005) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
-  create_table "edit_histories", force: :cascade do |t|
-    t.date "edit_date"
-    t.string "email"
-    t.string "first_name"
-    t.string "last_name"
-    t.string "phone_number"
-    t.bigint "contact_id", null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.index ["contact_id"], name: "index_edit_histories_on_contact_id"
-  end
-
   create_table "versions", force: :cascade do |t|
     t.string "item_type", null: false
     t.bigint "item_id", null: false
@@ -46,5 +34,4 @@ ActiveRecord::Schema.define(version: 2021_07_04_121005) do
     t.index ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id"
   end
 
-  add_foreign_key "edit_histories", "contacts"
 end
